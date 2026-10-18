@@ -1,0 +1,97 @@
+local KEY = "dstroblox"
+local GET_KEY_URL = "https://notevn.com/share/d4e2jcvx"
+
+local Players = game:GetService("Players")
+local gui = Instance.new("ScreenGui")
+gui.Name = "GenesisKeySystem"
+gui.ResetOnSpawn = false
+
+local ok = pcall(function()
+    gui.Parent = game:GetService("CoreGui")
+end)
+if not ok then
+    gui.Parent = Players.LocalPlayer:WaitForChild("PlayerGui")
+end
+
+local frame = Instance.new("Frame", gui)
+frame.Size = UDim2.fromOffset(320, 225)
+frame.Position = UDim2.new(0.5, -160, 0.5, -112)
+frame.BackgroundColor3 = Color3.fromRGB(20, 23, 35)
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
+
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 45)
+title.BackgroundTransparency = 1
+title.Text = "GENESIS HUB | KEY SYSTEM"
+title.TextColor3 = Color3.fromRGB(0, 220, 255)
+title.TextSize = 17
+title.Font = Enum.Font.GothamBold
+
+local input = Instance.new("TextBox", frame)
+input.Position = UDim2.fromOffset(20, 55)
+input.Size = UDim2.new(1, -40, 0, 38)
+input.PlaceholderText = "Enter your key..."
+input.Text = ""
+input.TextSize = 14
+input.Font = Enum.Font.Gotham
+input.TextColor3 = Color3.new(1, 1, 1)
+input.BackgroundColor3 = Color3.fromRGB(40, 44, 60)
+Instance.new("UICorner", input).CornerRadius = UDim.new(0, 7)
+
+local status = Instance.new("TextLabel", frame)
+status.Position = UDim2.fromOffset(10, 192)
+status.Size = UDim2.new(1, -20, 0, 22)
+status.BackgroundTransparency = 1
+status.Text = "Get a key to continue"
+status.TextColor3 = Color3.new(1, 1, 1)
+status.TextSize = 12
+status.Font = Enum.Font.Gotham
+
+local function createButton(text, y)
+    local b = Instance.new("TextButton", frame)
+    b.Position = UDim2.fromOffset(20, y)
+    b.Size = UDim2.new(1, -40, 0, 34)
+    b.BackgroundColor3 = Color3.fromRGB(0, 125, 200)
+    b.TextColor3 = Color3.new(1, 1, 1)
+    b.Text = text
+    b.TextSize = 14
+    b.Font = Enum.Font.GothamBold
+    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 7)
+    return b
+end
+
+local getKey = createButton("GET KEY", 103)
+local verify = createButton("VERIFY KEY", 145)
+
+getKey.MouseButton1Click:Connect(function()
+    local opened = pcall(function()
+        game:GetService("GuiService"):OpenBrowserWindow(GET_KEY_URL)
+    end)
+
+    if not opened and setclipboard then
+        pcall(setclipboard, GET_KEY_URL)
+        status.Text = "Link copied to clipboard!"
+    else
+        status.Text = "Complete the key steps, then return"
+    end
+end)
+
+verify.MouseButton1Click:Connect(function()
+    if input.Text ~= KEY then
+        status.Text = "Invalid key!"
+        return
+    end
+
+    status.Text = "Loading Genesis Hub..."
+    gui:Destroy()
+
+    local success, err = pcall(function()
+        loadstring(game:HttpGet(
+            "https://raw.githubusercontent.com/mainloadergg/GenesisHub/refs/heads/main/KingLegacy.lua"
+        ))()
+    end)
+
+    if not success then
+        warn("Genesis Hub load error:", err)
+    end
+end)
